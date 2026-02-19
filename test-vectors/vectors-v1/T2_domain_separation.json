@@ -35,7 +35,7 @@
   },
   "expected": {
     "decision": "FALLBACK",
-    "reason_code": "RC_DOMAIN_SEPARATION"
+    "reason_code": "RC_INTEGRITY_MISMATCH"
   },
   "expected_pc_digest": "b23ca6fca5034d8cc902c280f99acc0983060ff300657f2de261ff8229312be6"
 }

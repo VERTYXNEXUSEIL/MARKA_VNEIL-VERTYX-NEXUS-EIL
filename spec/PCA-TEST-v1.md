@@ -5,8 +5,8 @@ Defines conformance tests T1-T13.
 ## Test set
 
 - **T1 PC replay**: repeated nonce/session MUST trigger `RC_PC_REPLAY`.
-- **T2 Domain separation**: wrong hash label MUST trigger `RC_DOMAIN_SEPARATION`.
-- **T3 Constraints mismatch**: mismatched constraints digest/version MUST trigger `RC_CONSTRAINTS_MISMATCH`.
+- **T2 Domain separation**: wrong hash label MUST trigger `RC_INTEGRITY_MISMATCH`.
+- **T3 Constraints mismatch**: mismatched constraints digest/version MUST trigger `RC_INTEGRITY_MISMATCH`.
 - **T4 Reason stability**: identical failing inputs MUST produce same reason code.
 - **T5 TOCTOU**: state drift between check/use MUST trigger `RC_TOCTOU`.
 - **T6 Effective time**: out-of-window execution MUST trigger `RC_EFFECTIVE_TIME`.
