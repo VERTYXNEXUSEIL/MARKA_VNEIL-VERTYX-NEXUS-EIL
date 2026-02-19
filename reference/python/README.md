@@ -5,6 +5,6 @@ Implements deterministic canonicalization, domain-separated hashing, PC digestin
 ## Run
 
 ```bash
-python -m pip install -e .[dev] jsonschema
+python -m pip install -e .[dev]
 pytest -q
 ```
