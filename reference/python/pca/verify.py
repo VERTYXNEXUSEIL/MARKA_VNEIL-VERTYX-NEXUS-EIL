@@ -6,20 +6,20 @@ from .cert import build_pc_digest
 from .reason_codes import (
     CONSTRAINTS_DIGEST_MISMATCH,
     CONSTRAINTS_VERSION_MISMATCH,
-    INTEGRITY_FAIL,
     LEGAL_EFFECTIVE_TIME_MISMATCH,
+    RC_INTEGRITY_MISMATCH,
     VERIFY_ALLOW,
     VERIFY_CONFLICT,
 )
 
 
-def _dt(x: str) -> datetime:
-    return datetime.fromisoformat(x.replace("Z", "+00:00"))
+def _dt(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 def verify_pc(pc: dict, runtime: dict) -> tuple[str, str]:
     if runtime.get("expected_pc_digest") != build_pc_digest(pc):
-        return "FALLBACK", INTEGRITY_FAIL
+        return "FALLBACK", RC_INTEGRITY_MISMATCH
     if runtime.get("constraints_version_id") != pc.get("constraints_version_id"):
         return "FALLBACK", CONSTRAINTS_VERSION_MISMATCH
     if runtime.get("constraints_digest") != pc.get("constraints_digest"):

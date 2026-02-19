@@ -10,7 +10,7 @@ This repository publicly discloses PCA/CAE standard and reference implementation
 - First public release: v1.0.0
 - Release timestamp (UTC): <YYYY-MM-DDTHH:MM:SSZ>
 - Signed tag: v1.0.0 (verified signature)
-- Release artifacts: spec bundle + SHA256SUMS
+- Release artifacts: spec bundle + SHA256SUMS + MANIFEST.json + BUILDINFO.json
 - Disclaimer: no legal advice
 
 ## How to Verify Integrity
@@ -23,6 +23,10 @@ This repository publicly discloses PCA/CAE standard and reference implementation
 2. Verify SHA256SUMS:
    ```bash
    sha256sum -c dist/SHA256SUMS
+   ```
+3. Verify manifest entries against repository content:
+   ```bash
+   python tools/verify_manifest.py --manifest dist/MANIFEST.json
    ```
 
 ## Release & Prior-Art Packaging
@@ -40,10 +44,10 @@ mkdir -p "$tmpdir"
 cp -r spec schemas test-vectors reference README.md LICENSE-CODE LICENSE-SPEC NOTICE PATENT-NOTICE.md "$tmpdir"/
 (cd dist && zip -r pca-spec-v1.0.0.zip pca-spec-v1.0.0)
 
-# 3) Generate checksums
-(cd dist && sha256sum pca-spec-v1.0.0.zip > SHA256SUMS)
+# 3) Generate self-verifying artifacts
+python tools/build_release.py --tag v1.0.0
 
-# 4) Attach dist/pca-spec-v1.0.0.zip and dist/SHA256SUMS to GitHub Release
+# 4) Attach dist/pca-spec-v1.0.0.zip, dist/SHA256SUMS, dist/MANIFEST.json and dist/BUILDINFO.json to GitHub Release
 ```
 
 ## Conformance Profiles (CAE-Mark)

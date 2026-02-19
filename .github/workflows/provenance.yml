@@ -10,18 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build info and checksums
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Generate provenance artifacts
         run: |
-          mkdir -p dist
-          find spec schemas reference test-vectors -type f -print0 | sort -z | xargs -0 sha256sum > dist/SHA256SUMS
-          {
-            echo "commit=${GITHUB_SHA}"
-            echo "ref=${GITHUB_REF}"
-            echo "run_id=${GITHUB_RUN_ID}"
-            echo "generated_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          } > dist/BUILD-PROVENANCE.txt
+          python tools/build_release.py --tag provenance-${GITHUB_SHA}
       - name: Upload provenance artifacts
         uses: actions/upload-artifact@v4
         with:
           name: provenance
-          path: dist/
+          path: |
+            dist/SHA256SUMS
+            dist/MANIFEST.json
+            dist/BUILDINFO.json

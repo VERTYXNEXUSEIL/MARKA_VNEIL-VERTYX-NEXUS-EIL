@@ -5,8 +5,11 @@ on:
   pull_request:
 
 jobs:
-  checks:
-    runs-on: ubuntu-latest
+  python:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -15,7 +18,7 @@ jobs:
       - name: Install tooling
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pytest ruff
+          python -m pip install -e reference/python[dev]
       - name: Lint
         run: |
           cd reference/python
@@ -24,12 +27,25 @@ jobs:
         run: |
           cd reference/python
           python -m pytest -q
-      - name: Validate JSON schema files are parseable
+      - name: Validate schemas (CLI)
         run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          for p in Path('schemas').glob('*.json'):
-              json.loads(p.read_text(encoding='utf-8'))
-          print('schema-json-ok')
-          PY
+          python reference/cli/pca_cli.py validate-schemas
+      - name: Run vector suite (CLI)
+        run: |
+          python reference/cli/pca_cli.py run-vectors
+      - name: Build and verify release manifest
+        if: runner.os == 'Linux'
+        run: |
+          python tools/build_release.py --tag ci-${GITHUB_SHA}
+          python tools/verify_manifest.py --manifest dist/MANIFEST.json
+
+  t13-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Cross-implementation determinism (T13)
+        run: |
+          node reference/js/run_t13.mjs

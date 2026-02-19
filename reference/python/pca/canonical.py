@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import math
 from typing import Any
@@ -21,12 +23,27 @@ def prune_optional_none(data: dict[str, Any], schema: dict[str, Any]) -> dict[st
     required = set(schema.get("required", []))
     props = schema.get("properties", {})
     out: dict[str, Any] = {}
+
     for key, value in data.items():
         if key not in props:
+            out[key] = value
             continue
+
         if value is None and key not in required:
             continue
-        out[key] = value
+
+        prop_schema = props[key]
+        if isinstance(value, dict) and prop_schema.get("type") == "object":
+            out[key] = prune_optional_none(value, prop_schema)
+        elif isinstance(value, list) and prop_schema.get("type") == "array":
+            item_schema = prop_schema.get("items", {})
+            if item_schema.get("type") == "object":
+                out[key] = [prune_optional_none(item, item_schema) if isinstance(item, dict) else item for item in value]
+            else:
+                out[key] = value
+        else:
+            out[key] = value
+
     return out
 
 

@@ -49,6 +49,7 @@
       "not_after": "2026-12-31T23:59:59Z"
     },
     "plan_digest": "204b7171782b1e3d3ab7ad8ee1da0ce4e54fefbb6c40fd765b5340d81f227ac7",
+    "merkle_root": "a9dfe67f00acad4082dbb493d0925c123bf864201415eb8f5ba652b9904b73c9",
     "planner_config_digest": "a7e8854e153be6a80a81d3930bc88bd4b2b3bffaa4203ac0d47150ed143cfa4f",
     "action_ir_digest": "4a98bfa753b88e0b3a4662cee6c02b3c826dfa5803ba3aa7b255a62591e24c0f",
     "decision": "ALLOW",
@@ -63,15 +64,16 @@
           "retention": "p7y"
         }
       ]
-    }
+    },
+    "pc_digest": "35a20dacebde14c91e8262467fa778be8e171e9a02622fafb0f190055dc2651b"
   },
   "runtime": {
-    "expected_pc_digest": "db54e2601e0c684754bea782d208554ebc0f45074d448b60022c6bd1d4f92f14",
+    "expected_pc_digest": "35a20dacebde14c91e8262467fa778be8e171e9a02622fafb0f190055dc2651b",
     "constraints_version_id": "cons-v1",
     "constraints_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
     "now": "2026-06-01T00:00:00Z"
   },
-  "expected_pc_digest": "db54e2601e0c684754bea782d208554ebc0f45074d448b60022c6bd1d4f92f14",
+  "expected_pc_digest": "35a20dacebde14c91e8262467fa778be8e171e9a02622fafb0f190055dc2651b",
   "expected": {
     "decision": "FALLBACK",
     "reason_code": "CONSTRAINTS_DIGEST_MISMATCH"
