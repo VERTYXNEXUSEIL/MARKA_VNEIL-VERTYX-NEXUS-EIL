@@ -34,6 +34,7 @@ def test_reason_stability() -> None:
     out1 = execute_certified(vec["pc"], vec["runtime"], set())
     out2 = execute_certified(vec["pc"], vec["runtime"], set())
     assert out1 == out2
+    assert out1["reason_code"] == "INTEGRITY_MISMATCH"
 
 
 def test_schema_validation() -> None:
