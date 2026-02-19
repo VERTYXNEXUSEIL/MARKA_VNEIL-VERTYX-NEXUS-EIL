@@ -36,6 +36,16 @@ def test_reason_stability() -> None:
     assert out1 == out2
 
 
+def test_optional_field_omission_digest_stability() -> None:
+    vec = load_vector(VECTORS / "T7_optional_field_omission.json")
+    with_null_optionals = build_pc_digest(vec["pc"])
+    with_omitted_optionals = build_pc_digest(vec["pc_equivalent_without_optional_fields"])
+
+    assert with_null_optionals == vec["expected_pc_digest"]
+    assert with_omitted_optionals == vec["expected_pc_digest"]
+    assert with_null_optionals == with_omitted_optionals
+
+
 def test_schema_validation() -> None:
     vec = load_vector(VECTORS / "T10_brs_gate.json")
     validate(vec["pc"], "pc.schema.json")
