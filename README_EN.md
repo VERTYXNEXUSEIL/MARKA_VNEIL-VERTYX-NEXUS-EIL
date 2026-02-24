@@ -2,6 +2,8 @@
 
 Proof-Carrying Autonomy (PCA) / Certified Agentic Execution (CAE) is a product-neutral technical standard and implementation package for deterministic, certifiable autonomous action execution.
 
+**Canonical repository:** [GitHub VERTYXNEXUSEIL/PCA-SPEC](https://github.com/VERTYXNEXUSEIL/PCA-SPEC) · **Site:** [pca-spec.github.io](https://pca-spec.github.io). The **TSVNE** repo ([VERTYXNEXUSEIL/TSVNE](https://github.com/VERTYXNEXUSEIL/TSVNE)) is deprecated; use this repository for all development and releases.
+
 ## Authorship & First Publication
 
 This repository publicly discloses PCA/CAE standard and reference implementation.

@@ -5,7 +5,13 @@ import argparse
 import json
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
+import sys
+
+# CLI uses minimal schema validator (file-based $ref); pca uses full jsonschema
+_CLI_ROOT = Path(__file__).resolve().parents[2]
+if str(_CLI_ROOT / "reference" / "python") not in sys.path:
+    sys.path.insert(0, str(_CLI_ROOT / "reference" / "python"))
+from legacy_schema_stub import Draft202012Validator  # noqa: E402
 
 from pca.cert import build_merkle_root, build_pc_digest, build_plan_digest
 from pca.execute import execute_certified

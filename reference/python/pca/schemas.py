@@ -1,47 +1,24 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
-from jsonschema.exceptions import ValidationError
+from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 from referencing import Registry, Resource
 
-
-SCHEMAS_DIR = Path(__file__).resolve().parents[3] / "schemas"
-
-
-@lru_cache(maxsize=1)
-def _schema_registry() -> tuple[dict[str, dict[str, Any]], Registry]:
-    schema_map: dict[str, dict[str, Any]] = {}
-    resources: list[tuple[str, Resource]] = []
-
-    for path in SCHEMAS_DIR.glob("*.schema.json"):
-        schema = json.loads(path.read_text(encoding="utf-8"))
-        schema_map[path.name] = schema
-        schema_id = schema.get("$id")
-        if isinstance(schema_id, str):
-            resources.append((schema_id, Resource.from_contents(schema)))
-
-    return schema_map, Registry().with_resources(resources)
-
-
-def validate(instance: dict, schema_name: str) -> None:
-    schema_map, registry = _schema_registry()
-
-    try:
-        schema = schema_map[schema_name]
-    except KeyError as exc:
-        raise ValueError(f"Unknown schema: {schema_name}") from exc
-
-    validator = Draft202012Validator(
-        schema=schema,
-        registry=registry,
-        format_checker=Draft202012Validator.FORMAT_CHECKER,
-    )
-
-
 _SCHEMAS_DIR = Path(__file__).resolve().parents[3] / "schemas"
+
+# RFC 3339 date-time: must include time part (T); default checker has "date" but not "date-time"
+_FORMAT_CHECKER = FormatChecker()
+
+
+@_FORMAT_CHECKER.checks("date-time", raises=ValueError)
+def _check_date_time(instance: str) -> bool:
+    if not isinstance(instance, str) or "T" not in instance:
+        raise ValueError("date-time must be RFC3339 with time part (e.g. 2024-01-01T00:00:00Z)")
+    datetime.fromisoformat(instance.replace("Z", "+00:00"))
+    return True
 
 
 def _load_schemas() -> tuple[dict[str, dict], Registry]:
@@ -72,10 +49,13 @@ def validate(instance: dict, schema_name: str) -> None:
     if schema is None:
         raise ValueError(f"Unknown schema: {schema_name}")
 
-    validator = Draft202012Validator(schema=schema, registry=_SCHEMA_REGISTRY)
+    validator = Draft202012Validator(
+        schema=schema,
+        registry=_SCHEMA_REGISTRY,
+        format_checker=_FORMAT_CHECKER,
+    )
 
     try:
         validator.validate(instance)
     except ValidationError as exc:
-        raise ValueError(exc.message) from exc
         raise ValueError(str(exc)) from exc

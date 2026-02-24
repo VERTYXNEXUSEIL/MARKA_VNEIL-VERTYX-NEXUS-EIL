@@ -17,29 +17,74 @@
     "nonce"
   ],
   "properties": {
-    "pc_version": {"type": "string", "const": "1.0"},
-    "pc_id": {"type": "string"},
-    "issued_at": {"type": "string", "format": "date-time"},
-    "planner_id": {"type": "string"},
-    "constraints_version_id": {"type": "string"},
-    "constraints_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "pc_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "pc_id": {
+      "type": "string"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "planner_id": {
+      "type": "string"
+    },
+    "constraints_version_id": {
+      "type": "string"
+    },
+    "constraints_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "effective_time": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["not_before", "not_after"],
+      "required": [
+        "not_before",
+        "not_after"
+      ],
       "properties": {
-        "not_before": {"type": "string", "format": "date-time"},
-        "not_after": {"type": "string", "format": "date-time"}
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_after": {
+          "type": "string",
+          "format": "date-time"
+        }
       }
     },
-    "plan_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "merkle_root": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "merkle_root": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "steps": {
       "type": "array",
-      "items": {"$ref": "action_ir.schema.json"}
+      "items": {
+        "$ref": "action_ir.schema.json"
+      }
     },
-    "nonce": {"type": "string"},
-    "metadata": {"type": "object", "additionalProperties": true},
-    "signature": {"type": "string"}
+    "nonce": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "signature": {
+      "type": "string"
+    }
   }
 }

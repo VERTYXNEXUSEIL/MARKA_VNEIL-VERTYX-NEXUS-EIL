@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -20,8 +21,10 @@ class StepResult:
 
 
 def _run_subprocess(name: str, cmd: list[str], cwd: Path) -> None:
-    print(f"\n▶ {name}: {' '.join(cmd)}")
-    completed = subprocess.run(cmd, cwd=cwd, check=False)
+    print(f"\n>> {name}: {' '.join(cmd)}")
+    env = {**os.environ}
+    env.setdefault("PYTHONIOENCODING", "utf-8")
+    completed = subprocess.run(cmd, cwd=cwd, env=env, check=False)
     if completed.returncode != 0:
         raise RuntimeError(f"{name} failed with exit code {completed.returncode}")
 
@@ -81,12 +84,12 @@ def run_vectors() -> str:
         count += 1
     return f"{count} vectors matched expected outcomes"
 def run_pytest() -> str:
-    _run_subprocess("pytest", ["pytest", "-q"], PYTHON_DIR)
+    _run_subprocess("pytest", [sys.executable, "-m", "pytest", "-q"], PYTHON_DIR)
     return "pytest passed"
 
 
 def run_ruff() -> str:
-    _run_subprocess("ruff", ["ruff", "check", "."], PYTHON_DIR)
+    _run_subprocess("ruff", [sys.executable, "-m", "ruff", "check", "."], PYTHON_DIR)
     return "ruff passed"
 
 
@@ -120,7 +123,7 @@ def main() -> int:
             detail = step()
         except Exception as exc:  # noqa: BLE001
             summary.append(StepResult(name=name, status="FAIL", detail=str(exc)))
-            print(f"✖ {name}: {exc}")
+            print(f"[FAIL] {name}: {exc}")
             print("\nFinal summary:")
             for item in summary:
                 print(f"- [{item.status}] {item.name}: {item.detail}")
@@ -128,7 +131,7 @@ def main() -> int:
 
         status = "SKIP" if detail.startswith("skipped") else "OK"
         summary.append(StepResult(name=name, status=status, detail=detail))
-        icon = "↷" if status == "SKIP" else "✔"
+        icon = "[SKIP]" if status == "SKIP" else "[OK]"
         print(f"{icon} {name}: {detail}")
 
     print("\nFinal summary:")
@@ -137,5 +140,16 @@ def main() -> int:
     return 0
 
 
+def _safe_stdout() -> None:
+    """Use UTF-8 on Windows to avoid UnicodeEncodeError when printing or when subprocess writes."""
+    if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")
+            sys.stderr.reconfigure(encoding="utf-8")
+        except Exception:  # noqa: S110
+            pass
+
+
 if __name__ == "__main__":
+    _safe_stdout()
     raise SystemExit(main())
